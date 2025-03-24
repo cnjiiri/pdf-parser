@@ -1,13 +1,14 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import fitz  # PyMuPDF
+import io
 
 app = FastAPI()
 
-# CORS settings
+# Allow CORS for local testing or your frontend/chat UI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change in production
+    allow_origins=["*"],  # Change to your domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,9 +26,6 @@ async def parse_pdf(file: UploadFile = File(...)):
             if text:
                 full_text += text + "\n"
 
-        return {
-            "file_name": file.filename,
-            "text": full_text.strip()
-        }
+        return {"text": full_text.strip()}
     except Exception as e:
         return {"error": str(e)}
